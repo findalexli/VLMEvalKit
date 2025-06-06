@@ -128,6 +128,28 @@ def process_video(video_path, num_frames, min_pixels, max_pixels):
     return images
 
 
+def setup_visible_devices_per_rank():
+    # Check if CUDA_VISIBLE_DEVICES is already set
+    current_visible_devices = os.environ.get('CUDA_VISIBLE_DEVICES', None)
+    if current_visible_devices is not None:
+        # If CUDA_VISIBLE_DEVICES is already set, respect it
+        device_list = [int(x.strip()) for x in current_visible_devices.split(',') if x.strip()]
+        num_gpus = len(device_list)
+        logging.info(f"Using existing CUDA_VISIBLE_DEVICES: {current_visible_devices} ({num_gpus} GPUs)")
+        return num_gpus
+    
+    # Original logic for when CUDA_VISIBLE_DEVICES is not set
+    total_gpus = torch.cuda.device_count()
+    rank, world_size = get_rank_and_world_size()
+    assert world_size == 1, "Only support world_size == 1 for vLLM inference"
+    num_gpus = total_gpus // world_size
+    start_idx = rank * num_gpus
+    assigned_devices = list(range(start_idx, start_idx + num_gpus))
+    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in assigned_devices)
+    logging.info(f"[Rank {rank}] Visible GPUs: {assigned_devices}")
+    return num_gpus
+
+
 class KeywordsStoppingCriteria(StoppingCriteria):
     def __init__(self, keywords, tokenizer, input_ids):
         self.keywords = keywords
@@ -244,16 +266,16 @@ class Qwen2VLChat(Qwen2VLPromptMixin, BaseModel):
         max_gpu_mem = max(gpu_mems) if gpu_mems != [] else -1
         assert max_gpu_mem > 0
         self.use_vllm = kwargs.get('use_vllm', False)
+        self.use_vllm = True
         self.use_lmdeploy = kwargs.get('use_lmdeploy', False)
         self.limit_mm_per_prompt = VLLM_MAX_IMAGE_INPUT_NUM
         assert self.use_vllm + self.use_lmdeploy <= 1, "You can only set one flag between `use_vllm` and `use_lmdeploy` to True"  # noqa: E501
 
         if self.use_vllm:
             from vllm import LLM
-            gpu_count = torch.cuda.device_count()
-            if gpu_count >= 8:
-                tp_size = 8
-            elif gpu_count >= 4:
+            gpu_count = setup_visible_devices_per_rank()
+
+            if gpu_count >= 4:
                 tp_size = 4
             elif gpu_count >= 2:
                 tp_size = 2
@@ -550,9 +572,9 @@ class Qwen2VLChat(Qwen2VLPromptMixin, BaseModel):
         if DATASET_MODALITY(dataset) == 'VIDEO':
             assert len(videos) == 1
             videos_nd = [videos[0].detach().cpu().numpy().transpose(0, 2, 3, 1)]
-
+            print(text)
             video_inputs = {
-                "prompt": text[0],
+                "prompt": text,
                 "multi_modal_data": {"video": videos_nd[0]},
                 "mm_processor_kwargs":{}
             }

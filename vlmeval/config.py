@@ -1130,6 +1130,59 @@ qwen2vl_series = {
         total_pixels=24576 * 28 * 28,
         use_custom_prompt=False,
     ),
+    "Qwen2.5-VL-7B-Instruct-ForVideo-lmdeploy": partial(
+        Qwen2VLChat,
+        model_path="Qwen/Qwen2.5-VL-7B-Instruct",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+        use_lmdeploy=True
+    ),
+    "Qwen2.5-VL-7B-Instruct-ForVideo-vllm": partial(
+        Qwen2VLChat,
+        model_path="Qwen/Qwen2.5-VL-7B-Instruct",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+        use_vllm=True
+    ),
+    "7b_repcount_og_reward_v3_diff_lt2": partial(
+        Qwen2VLChat,
+        model_path="alexshengzhili/qwen2_5_vl_7b_repcount_og_reward_v3_diff_lt2",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+        use_lmdeploy=True
+    ),
+    "7b_repcount_og_reward_v3_diff_lt2_vllm": partial(
+        Qwen2VLChat,
+        model_path="alexshengzhili/qwen2_5_vl_7b_repcount_og_reward_v3_diff_lt2",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+        use_vllm=True
+    ),
+    "qwen2_5_vl_7b_repcount_june": partial(
+        Qwen2VLChat,
+        model_path="alexshengzhili/qwen2_5_vl_7b_repcount",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+    ),
+    "qwen2_5_vl_7b_repcount_vllm": partial(
+        Qwen2VLChat,
+        model_path="alexshengzhili/qwen2_5_vl_7b_repcount",
+        min_pixels=128 * 28 * 28,
+        max_pixels=768 * 28 * 28,
+        total_pixels=24576 * 28 * 28,
+        use_custom_prompt=False,
+        use_vllm=True
+    ),
     "Qwen2.5-VL-7B-Instruct-AWQ": partial(
         Qwen2VLChat,
         model_path="Qwen/Qwen2.5-VL-7B-Instruct-AWQ",
