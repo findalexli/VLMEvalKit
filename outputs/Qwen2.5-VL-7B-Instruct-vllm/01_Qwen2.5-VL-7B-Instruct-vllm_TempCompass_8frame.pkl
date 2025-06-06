@@ -1,0 +1,1 @@
+/home/alexli/VLMEvalKit/./outputs/Qwen2.5-VL-7B-Instruct-vllm/T20250528_Ga1fdb2ea/01_Qwen2.5-VL-7B-Instruct-vllm_TempCompass_8frame.pkl

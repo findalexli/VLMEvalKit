@@ -1,0 +1,1 @@
+/home/alexli/VLMEvalKit/./outputs/qwen2.5-vl-7b-instruct-dashscope/T20250502_G8c3908f8/qwen2.5-vl-7b-instruct-dashscope_TempCompass_8frame_nopack_supp.pkl
